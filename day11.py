@@ -11,8 +11,7 @@ def parse_monkeys(input) -> dict:
             monkeys[current_monkey]['items'] = items
         if line[0] == 'Operation:':
             monkeys[current_monkey]['operator'] = line[4]
-            monkeys[current_monkey]['number1'] = line[3]
-            monkeys[current_monkey]['number2'] = line[5]
+            monkeys[current_monkey]['number'] = line[5]
         if line[0] == 'Test:':
             monkeys[current_monkey]['divisor'] = int(line[3])
         if line[1] == 'true:':
@@ -26,14 +25,12 @@ def inspect_item(monkey_number, monkeys, should_divide):
     op = {'+': lambda x, y: x + y, '*': lambda x, y: x * y}
     for item in monkeys[monkey_number]['items']:
         monkeys[monkey_number]['inspected'] += 1
-        number1 = monkeys[monkey_number]['number1']
-        number2 = monkeys[monkey_number]['number2']
-        number1 = item if monkeys[monkey_number]['number1'] == 'old' else int(monkeys[monkey_number]['number1'])
-        number2 = item if monkeys[monkey_number]['number2'] == 'old' else int(monkeys[monkey_number]['number2'])
-        new_item = op[monkeys[monkey_number]['operator']](number1, number2)
+        number = item if monkeys[monkey_number]['number'] == 'old' else int(monkeys[monkey_number]['number'])
+        new_item = op[monkeys[monkey_number]['operator']](item, number)
         if should_divide:
             new_item = new_item // 3
-        new_item = reduce_number([2, 3, 7, 11, 19, 13,  5, 17], new_item)
+        divisors = [monkeys[monkey]['divisor'] for monkey in range(len(monkeys))]
+        new_item = reduce_number(divisors, new_item)
         if new_item % monkeys[monkey_number]['divisor'] == 0:
             monkeys[monkeys[monkey_number]['true']]['items'].append(new_item)
         else:
